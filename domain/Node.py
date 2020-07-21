@@ -4,13 +4,13 @@ import jsonpickle as jp
 
 
 class Node(object):
-    def __init__(self,label,dst,vulne,pos,cat,location):
+    def __init__(self,label,dst,vulne,pos,cat):
         self.label = label
         self.dst = dst
         self.vulneList = vulne
         self.pos = pos
         self.cat = cat  # PC SERVER ROUTER
-        self.location = location # 元组类型
+        
 
 
 
