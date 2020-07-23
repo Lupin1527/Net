@@ -10,6 +10,7 @@ class Node(object):
         self.vulneList = vulne
         self.pos = pos
         self.cat = cat  # PC SERVER ROUTER
+        
 
 
 
