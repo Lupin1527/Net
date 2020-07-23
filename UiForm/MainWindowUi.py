@@ -91,7 +91,7 @@ if __name__ == '__main__':
         [5, 5],
         [15, 5]
     ], dtype=float)
-    print(type(pos))
+    #print(type(pos))
     ## Define the set of connections in the graph
     adj = np.array([
         [0, 1],
@@ -102,12 +102,15 @@ if __name__ == '__main__':
         [2, 4],
         [3, 2],
         [4, 5],
+
     ])
     #  adj = np.append(adj,[[0,4]],axis=0)
 
     #  print(adj)
     ## Define the symbol to use for each node (this is optional)
-    symbols = ['o', 'o', 'o', 'o', 'o', 'o']
+    symbols = ['o', 'o', 'o', 'o', 'o', 'o'] #list
+
+    #print(type(symbols))
 
     ## Define the line style for each connection (this is optional)
     lines = np.array([
@@ -119,14 +122,18 @@ if __name__ == '__main__':
         (255, 255, 255, 255, 4),
         (255, 255, 255, 255, 4),
         (255, 255, 255, 255, 4),
+        #(244,233,233,233,1)
 
     ], dtype=[('red', np.ubyte), ('green', np.ubyte), ('blue', np.ubyte), ('alpha', np.ubyte), ('width', float)])
+    print(lines)
+
     for i in lines:
         m = i[4]
         # print('%s'%m)
         # print(i)
     ## Define text to show next to each symbol
-    texts = ["Point %d" % i for i in range(6)]
+    texts = ["Point %d" % i for i in range(6)]    #list
+   # print(type(texts))
 
     ## Update the graph
     mainGraph.setData(pos=pos, adj=adj, pen=lines, size=1, symbol=symbols, pxMode=False, text=texts)
@@ -142,21 +149,38 @@ if __name__ == '__main__':
         AddPoint_pane.show()
 
     def Addline(startpoint,endpoint,posibility):
-        print(startpoint)
-        print(endpoint)
-        print(posibility)
+        print(int(startpoint))
+        print(int(endpoint))
+        #
+        global adj,lines
+        adj = np.append(adj,[[int(startpoint),int(endpoint)]],axis=0)
+        adddline = np.array([
+        (255, 0, 0, 255, 10),
+    ], dtype=[('red', np.ubyte), ('green', np.ubyte), ('blue', np.ubyte), ('alpha', np.ubyte), ('width', float)])
+        lines = np.append(lines,adddline,axis=0)
+        print(lines)
+        mainGraph.setData(pos=pos, adj=adj, pen=lines, size=1, symbol=symbols, pxMode=False, text=texts)
+
+
 
         AddLineUi_pane.hide()
 
     def ExitAddLineUi():
         AddLineUi_pane.hide()
 
-    def Addpoint(name,vulne,position,cat):
+    def Addpoint(name, vulne, position, cat):
         print(name)
         print(vulne)
         print(tuple(position))
         print(cat)
+        global pos,symbols,texts
+        pos = np.append(pos, [[15, 10]], axis=0)
+       # print(pos)
 
+        symbols.append('o')
+       # print(symbols)
+        texts.append('new point')
+        mainGraph.setData(pos=pos, adj=adj, pen=lines, size=1, symbol=symbols, pxMode=False, text=texts)
         AddPoint_pane.hide()
 
     def ExitAddpointUi():
