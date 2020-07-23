@@ -1,5 +1,9 @@
+from domain.Node import Node
+from domain.NodeType import NodeType
+
+
 class NetGraph(object):
-    def __init__(self,name,nodeList):
+    def __init__(self,name,nodeList=[]):
         # 图的名称
         self.name = name
         # 节点列表
@@ -10,6 +14,19 @@ class NetGraph(object):
         self.result = None
 
     def analyze(self):
+
+
+    def newNode(self,position,cat=NodeType.PC):
+        num = self.nodeNum
+        self.nodeNum = len(self.nodeList)
+        nodeLabelList = []
+        for node in self.nodeList:
+            nodeLabelList.append(node.label)
+        defaultNodeLabel = cat.name+str(num)
+        while defaultNodeLabel in nodeLabelList:
+            defaultNodeLabel = cat.name+str(++num)
+
+        self.nodeList.append(Node(defaultNodeLabel)
 
 
 
