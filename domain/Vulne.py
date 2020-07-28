@@ -27,14 +27,14 @@ class Vulne(object):
         else:
             self.level = Level.UNKNOWN
 
-        # 随机生成该漏洞被攻击的概率
-        if attComplexity == Level.UNKNOWN:
-            prob = -1
-        elif attComplexity == Level.NONE:
-            prob = 1
-        else:
-            prob = random.uniform(0, 1 / 3) + (3 - attComplexity.value) / 3
-        self.prob = round(prob,3)
+        # # 随机生成该漏洞被攻击的概率
+        # if attComplexity == Level.UNKNOWN:
+        #     prob = -1
+        # elif attComplexity == Level.NONE:
+        #     prob = 1
+        # else:
+        #     prob = random.uniform(0, 1 / 3) + (3 - attComplexity.value) / 3
+        # self.prob = round(prob,3)
 
 
 if __name__ == '__main__':
