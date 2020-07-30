@@ -18,7 +18,7 @@ class PersonalUI(QMainWindow,Ui_Form):
     #self.setStyleSheet("background-color:cyan;")
 
     self.pw = pg.PlotWidget(self)  # 创建一个绘图控件
-    self.pw.resize(300, 200)
+    self.pw.resize(350, 350)
     self.pw.move(20, 20)
 
 

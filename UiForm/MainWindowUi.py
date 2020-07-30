@@ -78,6 +78,8 @@ if __name__ == '__main__':
     AddPoint_pane = AddpointUi(personalUI_pane)
     AddLineUi_pane = AddLineUi(personalUI_pane)
 
+
+
     #创建图类别
     mainGraph = Graph()
     personalUI_pane.pw.addItem(mainGraph)
