@@ -1,17 +1,23 @@
 import sys
+
+import pyqtgraph
+from pyqtgraph.graphicsItems import ScatterPlotItem
+
 from UiForm.PersonalCreateModelDemo import *
 from UiForm.AddPiontUIDemo import *
 from UiForm.AddLineUiDemo import *
 from PyQt5.QtWidgets import QApplication
+from Nodetest.NetGraphZxc import *
 
 
 class Graph(pg.GraphItem):#graph类
+
     def __init__(self):
         self.dragPoint = None
         self.dragOffset = None
         self.textItems = []
         pg.GraphItem.__init__(self)
-        self.scatter.sigClicked.connect(self.clicked)
+
 
     def setData(self, **kwds):
         self.text = kwds.pop('text', [])
@@ -67,8 +73,37 @@ class Graph(pg.GraphItem):#graph类
         self.updateGraph()
         ev.accept()
 
-    def clicked(self, pts):
-        print("clicked: %s" % pts)
+    #def clicked(self, pts):
+
+        #print("clicked: %s" % pts)
+   #     print(pts)
+        #print(pts)
+ #       self.mouseclicked.emit()
+
+    def pointclicked(self):
+        pass
+
+    def mouseClickEvent(self, ev):#注释）这里的应用一定要注释掉ScatterPlotItem.py中的mouseClickEvent(self, ev)
+        try:
+            G.attractVex = []
+            G.routeToVex = []
+            pos = ev.pos()
+            pts = self.scatter.pointsAt(pos)
+            #print(pts[0].data()[0])
+            a = pts[0].data()[0]
+            a = str(a)
+
+            personalUI_pane.pointName.setText('%s'%a)
+            for node in G.nodeList:
+                if a == node.label:
+                    G.WhoGetTheNode(node)
+                    break
+            for vex in G.attractVex:
+                print(vex.label)
+        except:
+            pass
+
+
 
 if __name__ == '__main__':
 
@@ -116,18 +151,18 @@ if __name__ == '__main__':
 
     ## Define the line style for each connection (this is optional)
     lines = np.array([
-        (255, 0, 0, 255, 22),
-        (255, 0, 255, 255, 2),
-        (255, 0, 255, 255, 3),
-        (255, 255, 0, 255, 2),
-        (255, 0, 0, 255, 1),
+        (255, 255, 255, 255, 4),
+        (255, 255, 255, 255, 4),
+        (255, 255, 255, 255, 4),
+        (255, 255, 255, 255, 4),
+        (255, 255, 255, 255, 4),
         (255, 255, 255, 255, 4),
         (255, 255, 255, 255, 4),
         (255, 255, 255, 255, 4),
         #(244,233,233,233,1)
 
     ], dtype=[('red', np.ubyte), ('green', np.ubyte), ('blue', np.ubyte), ('alpha', np.ubyte), ('width', float)])
-    print(lines)
+    #print(lines)
 
     for i in lines:
         m = i[4]
@@ -140,7 +175,45 @@ if __name__ == '__main__':
     ## Update the graph
     mainGraph.setData(pos=pos, adj=adj, pen=lines, size=1, symbol=symbols, pxMode=False, text=texts)
 
+    attA = AttTemplate('SSHproblem', 'no', 'no', 0.8)
+    attB = AttTemplate('SSHproblem', 'no', 'no', 0.4)
+    attC = AttTemplate('HttpProblem', 'no', 'no', 0.9)
+    attD = AttTemplate('SMTPproblem', 'no', 'no', 0.4)
+    attE = AttTemplate('1433Problem', 'no', 'no', 0.7)
+    attF = AttTemplate('ShellProblem', 'no', 'no', 0.3)
+    attG = AttTemplate('bagProblem', 'no', 'no', 0.1)
+    G = NetGraph('test')
+    G.newNode('0', None, 'hard', NodeType.ATTACKER)#a
+    NodeA = G.NodeGet('0')
+    G.newNode('1', None, 'test', NodeType.PC)#b
+    NodeB = G.NodeGet('1')
+    G.newNode('2', None, 'test', NodeType.PC)
+    NodeC = G.NodeGet('2')
+    G.newNode('3', None, 'test', NodeType.PC)
+    NodeD = G.NodeGet('3')
+    G.newNode('4', None, 'test', NodeType.PC)
+    NodeE = G.NodeGet('4')
+    G.newNode('5', None, 'test', NodeType.PC)
+    NodeF = G.NodeGet('5')
+    G.newVex('Vex0', NodeA, NodeB, attA)
+    Vex0 = G.VexGet('Vex0')
+    G.newVex('Vex1', NodeA, NodeC, attB)
+    G.newVex('Vex2', NodeA, NodeD, attC)
+    G.newVex('Vex3', NodeB, NodeE, attF)
+    G.newVex('Vex4', NodeB, NodeC, attD)
+    G.newVex('Vex5', NodeC, NodeE, attE)
+    G.newVex('Vex6', NodeD, NodeC, attE)
+    G.newVex('Vex7', NodeD, NodeF, attG)
+    G.newVex('Vex8', NodeE, NodeF, attE)
+    # print(G.nodeList)
+    #  print(G.vexList)
+    # G.result=[['a',1]]
+    G.stack = [[Vex0, 1]]
 
+    G.uselist = copy.deepcopy(G.vexList)
+    #print(G.uselist)
+    G.analyze(NodeA)
+   # print(G.result)
 
     #创建槽
     def showGotoAddline():
@@ -162,6 +235,7 @@ if __name__ == '__main__':
         lines = np.append(lines,adddline,axis=0)
         print(lines)
         mainGraph.setData(pos=pos, adj=adj, pen=lines, size=1, symbol=symbols, pxMode=False, text=texts)
+
 
 
 
@@ -189,6 +263,11 @@ if __name__ == '__main__':
         AddPoint_pane.hide()
 
 
+
+
+
+
+
     #结尾
     personalUI_pane.GotoAddline_signal.connect(showGotoAddline)
     personalUI_pane.GotoAddpoint_signal.connect(showGotoAddPoint)
@@ -198,6 +277,7 @@ if __name__ == '__main__':
 
     AddPoint_pane.Acceptpoint_signal.connect(Addpoint)
     AddPoint_pane.Rejectpoint_signal.connect(ExitAddpointUi)
+
 
 
 
