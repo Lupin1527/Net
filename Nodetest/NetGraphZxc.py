@@ -1,4 +1,5 @@
-
+import traceback
+from queue import Queue
 from Nodetest.Node import *
 from Nodetest.bsl import *
 import copy
@@ -18,7 +19,7 @@ class NetGraph(object):
         # 节点个数
         self.nodeNum = len(nodeList)
         # 分析结果 attPathList
-        self.result = [['a',1]]
+        self.result = [['0',1]]
         # 边列表
         self.vexList = vexList
         # 边个数
@@ -27,9 +28,16 @@ class NetGraph(object):
         self.vulneList = vulneList
         # 漏洞个数
         self.vulneNum = len(vulneList)
+
         self.uselist = copy.deepcopy(self.vexList) #深复制边列表
+
         self.stack = []#栈
+
         self.roadnum = 0#生成路径个数
+
+        self.routeToVex = []#用来处理中间函数的（可以删，但暂时没想好怎么改）
+
+        self.attractVex = []#用来记录攻击结点的所有路径
 
 
     def analyze(self,startNode):
@@ -62,7 +70,7 @@ class NetGraph(object):
             self.result.append(m)
             self.roadnum = self.roadnum+1
             record = self.stack.pop()#弹出栈顶元素
-            print(record[0].label)
+            #print(record[0].label)
             lennode = len(self.result[self.roadnum][0])
             temp = self.result[self.roadnum][0][0:lennode-2]
             self.result[self.roadnum][0] = temp
@@ -145,6 +153,33 @@ class NetGraph(object):
                 return vex
         return -1
 
+    def WhoGetTheNode(self,node):  #得到所有到该结点的路径
+        try:
+            for route in self.result:
+                length = len(route[0])
+                if(length!=0):
+                    needNumber = route[0][length-1]
+                #print(needNumber)
+                if(node.label == needNumber):
+                    #print(route)
+                    self.routeToVex.append(route[0])
+            for route in self.routeToVex:
+                roulen = len(route)
+
+                while((roulen-2)>0):
+                    #print(route[roulen-1],route[roulen-3])
+                    endNode = (route[roulen-1])
+                    startNode = (route[roulen-3])
+                    for vex in self.vexList:
+                        if(vex.end.label == endNode):
+                            if(vex.start.label == startNode):
+                                self.attractVex.append(vex)
+                    roulen = roulen -2
+
+
+
+        except Exception:
+            traceback.print_exc()
 
 
 
@@ -159,18 +194,18 @@ if __name__ == '__main__':
     attF = AttTemplate('ShellProblem','no','no',0.3)
     attG = AttTemplate('bagProblem','no','no',0.1)
     G = NetGraph('test')
-    G.newNode('a',None,'hard',NodeType.ATTACKER)
-    NodeA = G.NodeGet('a')
-    G.newNode('b',None,'test',NodeType.PC)
-    NodeB = G.NodeGet('b')
-    G.newNode('c',None,'test',NodeType.PC)
-    NodeC = G.NodeGet('c')
-    G.newNode('d',None,'test',NodeType.PC)
-    NodeD = G.NodeGet('d')
-    G.newNode('e',None,'test',NodeType.PC)
-    NodeE = G.NodeGet('e')
-    G.newNode('f',None,'test',NodeType.PC)
-    NodeF = G.NodeGet('f')
+    G.newNode('0',None,'hard',NodeType.ATTACKER)
+    NodeA = G.NodeGet('0')
+    G.newNode('1',None,'test',NodeType.PC)
+    NodeB = G.NodeGet('1')
+    G.newNode('2',None,'test',NodeType.PC)
+    NodeC = G.NodeGet('2')
+    G.newNode('3',None,'test',NodeType.PC)
+    NodeD = G.NodeGet('3')
+    G.newNode('4',None,'test',NodeType.PC)
+    NodeE = G.NodeGet('4')
+    G.newNode('5',None,'test',NodeType.PC)
+    NodeF = G.NodeGet('5')
     G.newVex('Vex0',NodeA,NodeB,attA)
     Vex0 = G.VexGet('Vex0')
     G.newVex('Vex1',NodeA,NodeC,attB)
@@ -187,6 +222,7 @@ if __name__ == '__main__':
     G.stack = [[Vex0,1]]
 
     G.uselist = copy.deepcopy(G.vexList)
-    print(G.uselist)
     G.analyze(NodeA)
-    print(G.result)
+    G.WhoGetTheNode(NodeC)
+    for vex in G.attractVex:
+        print(vex.label)
